@@ -33,6 +33,11 @@ docker logs <container_id> sh
 docker exec -it server-gkw4sc0kwokw8kwwok0gocsw-190816991224 sh
 ```
 
+# Enter the container shell and its postgres database
+```bash
+docker exec -it <container_name> psql -U admin -d postgres
+```
+
 
 
 
