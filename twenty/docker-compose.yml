@@ -22,15 +22,19 @@ services:
       - server-local-data:/app/packages/twenty-server/.local-storage
       - docker-data:/app/docker-data
     environment:
-      NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
-      SERVER_URL: ${TWENTY_HOST}
-      REDIS_URL: ${TWENTY_REDIS_URL:-redis://twenty-redis:6379}
-      STORAGE_TYPE: ${STORAGE_TYPE}
-      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
-      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
-      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
+      - NODE_PORT=3000
+      - TWENTY_DB
+      - TWENTY_DB_USER
+      - TWENTY_DB_PASS
+      - POSTGRES_PORT=5432
+      - PG_DATABASE_URL=postgres://TWENTY_DB_USER:TWENTY_DB_PASS@postgresql:POSTGRES_PORT/TWENTY_DB
+      - SERVER_URL=TWENTY_HOST
+      - REDIS_URL=TWENTY_REDIS_URL
+      - STORAGE_TYPE
+      - STORAGE_S3_REGION
+      - STORAGE_S3_NAME
+      - STORAGE_S3_ENDPOINT
+      - APP_SECRET
     labels:
       - traefik.enable=true
       - traefik.http.routers.twenty.rule=Host(`${TWENTY_HOST}`)
@@ -62,15 +66,19 @@ services:
       - yarn
       - worker:prod
     environment:
-      PG_DATABASE_URL: postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
-      SERVER_URL: ${TWENTY_HOST}
-      REDIS_URL: ${TWENTY_REDIS_URL:-redis://twenty-redis:6379}
-      DISABLE_DB_MIGRATIONS: true
-      STORAGE_TYPE: ${STORAGE_TYPE}
-      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
-      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
-      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
+      - TWENTY_DB
+      - TWENTY_DB_USER
+      - TWENTY_DB_PASS
+      - POSTGRES_PORT=5432
+      - PG_DATABASE_URL=postgres://TWENTY_DB_USER:TWENTY_DB_PASS@postgresql:POSTGRES_PORT/TWENTY_DB
+      - SERVER_URL=TWENTY_HOST
+      - REDIS_URL=TWENTY_REDIS_URL
+      - DISABLE_DB_MIGRATIONS=true
+      - STORAGE_TYPE
+      - STORAGE_S3_REGION
+      - STORAGE_S3_NAME
+      - STORAGE_S3_ENDPOINT
+      - APP_SECRET
     depends_on:
       server:
         condition: service_healthy
