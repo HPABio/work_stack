@@ -35,7 +35,7 @@ docker exec -it server-gkw4sc0kwokw8kwwok0gocsw-190816991224 sh
 
 # Enter the container shell and its postgres database
 ```bash
-docker exec -it <container_name> psql -U admin -d postgres
+docker exec -it <container_name> psql -U admin -d postgres -c "\du"
 ```
 
 
@@ -50,7 +50,9 @@ POSTGRES_SUPERUSER=admin
 
 https://github.com/HPABio/work_stack.git
 
+docker exec -it  sh           
 
+postgresql-mccogkg480o40wwkwssk4s8g-223657707597
 root@srv814301:~# redis://redis:6379
 root@srv814301:~# s:6379: No such server-gkw4sc0kwokw8kwwok0gocsw-212943709202  sh
 root@srv814301:~# docker exec -it server-gkw4sc0kwokw8kwwok0gocsw-212943709202 sh                                 
