@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres:16-alpine
+    container_name: postgresql
+    restart: always
+    networks:
+      - coolify-net
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: ${POSTGRES_SUPERUSER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERPASS:-changeme}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} || exit 1"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+volumes:
+  postgresql-data:
+
+networks:
+  coolify-net:
+    external: true

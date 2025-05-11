@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  calcom:
+    image: calcom.docker.scarf.sh/calcom/cal.com
+    restart: always
+    networks:
+      - coolify-net
+    environment:
+      - NODE_ENV=production
+      - TZ=${TZ}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY}
+      - NEXT_PUBLIC_WEBAPP_URL=https://${CALCOM_HOST}
+      - NEXT_PUBLIC_API_V2_URL=https://${CALCOM_HOST}/api/v2
+      - NEXT_PUBLIC_LICENSE_CONSENT=true
+      - CALCOM_TELEMETRY_DISABLED=true
+      - DATABASE_URL=postgresql://${CALCOM_DB_USER}:${CALCOM_DB_PASS}@postgresql:5432/${CALCOM_DB}
+      - DATABASE_DIRECT_URL=postgresql://${CALCOM_DB_USER}:${CALCOM_DB_PASS}@postgresql:5432/${CALCOM_DB}
+    ports:
+      - 3000:3000
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.calcom.rule=Host(`${CALCOM_HOST}`)
+      - traefik.http.routers.calcom.entrypoints=websecure
+      - traefik.http.routers.calcom.tls=true
+      - traefik.http.routers.calcom.tls.certresolver=letsencrypt
+      - traefik.http.services.calcom.loadbalancer.server.port=3000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 1"]
+      interval: 10s
+      timeout: 20s
+      retries: 10
+
+networks:
+  coolify-net:
+    external: true

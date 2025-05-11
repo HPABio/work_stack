@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    networks:
+      - coolify-net
+    environment:
+      - N8N_PORT=3000
+      - N8N_PROTOCOL=https
+      - N8N_HOST=n8n.biocentra.eu
+      - N8N_EDITOR_BASE_URL=https://n8n.biocentra.eu
+      - WEBHOOK_URL=https://n8n.biocentra.eu
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-n8n}
+      - DB_POSTGRESDB_HOST=postgresql
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_USER=${SERVICE_USER_POSTGRES}
+      - DB_POSTGRESDB_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      - DB_POSTGRESDB_SCHEMA=public
+      - GENERIC_TIMEZONE=Europe/Berlin
+      - TZ=Europe/Berlin
+      - NODE_ENV=production
+    volumes:
+      - n8n-data:/home/node/.n8n
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.n8n.rule=Host(`n8n.biocentra.eu`)
+      - traefik.http.routers.n8n.entrypoints=websecure
+      - traefik.http.routers.n8n.tls=true
+      - traefik.http.routers.n8n.tls.certresolver=letsencrypt
+      - traefik.http.services.n8n.loadbalancer.server.port=3000
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ || exit 1"]
+      interval: 10s
+      timeout: 20s
+      retries: 10
+
+volumes:
+  n8n-data:
+
+networks:
+  coolify-net:
+    external: true

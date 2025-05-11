@@ -1,0 +1,14 @@
+-- n8n
+CREATE DATABASE n8n;
+CREATE USER n8n_user WITH ENCRYPTED PASSWORD 'n8n_pass';
+GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n_user;
+
+-- calcom
+CREATE DATABASE calcom;
+CREATE USER calcom_user WITH ENCRYPTED PASSWORD 'calcom_pass';
+GRANT ALL PRIVILEGES ON DATABASE calcom TO calcom_user;
+
+-- twenty (optional)
+CREATE DATABASE twenty;
+CREATE USER twenty_user WITH ENCRYPTED PASSWORD 'twenty_pass';
+GRANT ALL PRIVILEGES ON DATABASE twenty TO twenty_user;
