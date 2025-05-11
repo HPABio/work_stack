@@ -6,8 +6,8 @@ services:
     image: ubuntu
     user: root
     volumes:
-      - 'server-local-data:/tmp/server-local-data'
-      - 'docker-data:/tmp/docker-data'
+      - server-local-data:/tmp/server-local-data
+      - docker-data:/tmp/docker-data
     command: |
       bash -c "chown -R 1000:1000 /tmp/server-local-data && chown -R 1000:1000 /tmp/docker-data"
     networks:
@@ -15,85 +15,71 @@ services:
     restart: 'no'
 
   server:
-    image: 'twentycrm/twenty:${TAG:-latest}'
+    image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
-      - 'docker-data:/app/docker-data'
+      - docker-data:/app/docker-data
     environment:
-      NODE_PORT: 3000  # Aligned to 3000 port internally
-      PG_DATABASE_URL: 'postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default'
-      SERVER_URL: '${SERVER_URL}'
-      REDIS_URL: '${REDIS_URL:-redis://redis:6379}'
-      STORAGE_TYPE: '${STORAGE_TYPE}'
-      STORAGE_S3_REGION: '${STORAGE_S3_REGION}'
-      STORAGE_S3_NAME: '${STORAGE_S3_NAME}'
-      STORAGE_S3_ENDPOINT: '${STORAGE_S3_ENDPOINT}'
-      APP_SECRET: '${APP_SECRET:-replace_me_with_a_random_string}'
+      NODE_PORT: 3000
+      PG_DATABASE_URL: postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      SERVER_URL: ${TWENTY_HOST}
+      REDIS_URL: ${TWENTY_REDIS_URL:-redis://twenty-redis:6379}
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
     labels:
       - traefik.enable=true
-      - traefik.http.routers.twenty.rule=Host(`twenty.biocentra.eu`)
+      - traefik.http.routers.twenty.rule=Host(`${TWENTY_HOST}`)
       - traefik.http.routers.twenty.entrypoints=https
       - traefik.http.routers.twenty.tls=true
       - traefik.http.routers.twenty.tls.certresolver=letsencrypt
-      - traefik.http.services.twenty.loadbalancer.server.port=3000  # Updated to match internal port
+      - traefik.http.services.twenty.loadbalancer.server.port=3000
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
-      db:
+      redis:
+        condition: service_started
+      postgresql:
         condition: service_healthy
     networks:
       - coolify-net
     healthcheck:
-      test: 'curl --fail http://localhost:3000/healthz'
+      test: curl --fail http://localhost:3000/healthz || exit 1
       interval: 5s
       timeout: 5s
       retries: 10
     restart: always
 
   worker:
-    image: 'twentycrm/twenty:${TAG:-latest}'
+    image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     command:
       - yarn
-      - 'worker:prod'
+      - worker:prod
     environment:
-      PG_DATABASE_URL: 'postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default'
-      SERVER_URL: '${SERVER_URL}'
-      REDIS_URL: '${REDIS_URL:-redis://redis:6379}'
-      DISABLE_DB_MIGRATIONS: 'true'
-      STORAGE_TYPE: '${STORAGE_TYPE}'
-      STORAGE_S3_REGION: '${STORAGE_S3_REGION}'
-      STORAGE_S3_NAME: '${STORAGE_S3_NAME}'
-      STORAGE_S3_ENDPOINT: '${STORAGE_S3_ENDPOINT}'
-      APP_SECRET: '${APP_SECRET:-replace_me_with_a_random_string}'
+      PG_DATABASE_URL: postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      SERVER_URL: ${TWENTY_HOST}
+      REDIS_URL: ${TWENTY_REDIS_URL:-redis://twenty-redis:6379}
+      DISABLE_DB_MIGRATIONS: true
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
     depends_on:
-      db:
-        condition: service_healthy
       server:
         condition: service_healthy
-    networks:
-      - coolify-net
-    restart: always
-
-  db:
-    image: 'postgres:16'
-    volumes:
-      - 'db-data:/var/lib/postgresql/data'
-    environment:
-      POSTGRES_USER: '${PG_DATABASE_USER:-postgres}'
-      POSTGRES_PASSWORD: '${PG_DATABASE_PASSWORD:-postgres}'
-    healthcheck:
-      test: 'pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      redis:
+        condition: service_started
     networks:
       - coolify-net
     restart: always
 
   redis:
-    image: redis
+    image: redis:7
     command:
       - '--maxmemory-policy'
       - noeviction
@@ -102,9 +88,8 @@ services:
     restart: always
 
 volumes:
-  docker-data: null
-  db-data: null
-  server-local-data: null
+  docker-data:
+  server-local-data:
 
 networks:
   coolify-net:
