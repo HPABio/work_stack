@@ -4,7 +4,7 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n
     restart: always
-    networks:
+      - coolify
       - coolify-net
     environment:
       - N8N_PORT=3000
@@ -29,8 +29,6 @@ services:
     labels:
       - traefik.enable=true
       - 'traefik.http.routers.n8n.rule=Host("n8n.biocentra.eu")'
-      - traefik.http.routers.n8n.entrypoints=websecure
-      - traefik.http.routers.n8n.tls=true
       - traefik.http.routers.n8n.tls.certresolver=letsencrypt
       - traefik.http.services.n8n.loadbalancer.server.port=3000
       - traefik.http.routers.n8n.entrypoints=https
@@ -44,5 +42,7 @@ volumes:
   n8n-data:
 
 networks:
+  coolify:
+    external: true
   coolify-net:
     external: true

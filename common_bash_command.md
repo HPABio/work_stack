@@ -40,7 +40,17 @@ docker exec -it <container_name> psql -U admin -d postgres -c "\du"
 
 
 
+# Check DNS resolution
+```bash
+dig n8n.bio-centra.com +short   
+```
 
+
+```bash
+curl -I http://n8n.bio-centra.com +o history
+```
+
+```bash
 Notes:
 POSTGRESQL-work-space
 
@@ -78,3 +88,6 @@ root@srv814301:~#
 services:
   redis:
     image: r
+
+
+    docker ps --format "table {{.Names}}\t{{.Image}}"
