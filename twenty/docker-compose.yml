@@ -21,10 +21,6 @@ services:
       - 'docker-data:/app/docker-data'
     environment:
       - NODE_PORT=3000
-      - TWENTY_DB=${TWENTY_DB}
-      - TWENTY_DB_USER=${TWENTY_DB_USER}
-      - TWENTY_DB_PASS=${TWENTY_DB_PASS}
-      - POSTGRES_PORT=${POSTGRES_PORT}
       - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${TWENTY_HOST}
       - REDIS_URL=${TWENTY_REDIS_URL}
@@ -63,9 +59,6 @@ services:
       - yarn
       - worker:prod
     environment:
-      - TWENTY_DB=${TWENTY_DB}
-      - TWENTY_DB_USER=${TWENTY_DB_USER}
-      - TWENTY_DB_PASS=${TWENTY_DB_PASS}
       - POSTGRES_PORT=5432
       - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${TWENTY_HOST}
