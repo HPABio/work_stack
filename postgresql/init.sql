@@ -12,3 +12,7 @@ GRANT ALL PRIVILEGES ON DATABASE calcom TO calcom_user;
 CREATE DATABASE twenty;
 CREATE USER twenty_user WITH ENCRYPTED PASSWORD 'twentyBioCentra2025!!';
 GRANT ALL PRIVILEGES ON DATABASE twenty TO twenty_user;
+
+--delete all
+```bash
+psql -U postgres -d n8n -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
