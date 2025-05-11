@@ -23,9 +23,6 @@ services:
       - DATABASE_DIRECT_URL=postgresql://CALCOM_DB_USER:CALCOM_DB_PASS@postgresql:5432/CALCOM_DB
     ports:
       - 3000:3000
-    depends_on:
-      postgresql:
-        condition: service_healthy
     labels:
       - traefik.enable=true
       - traefik.http.routers.calcom.rule=Host(`${CALCOM_HOST}`)
