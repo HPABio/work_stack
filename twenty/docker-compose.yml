@@ -16,8 +16,6 @@ services:
 
   server:
     image: twentycrm/twenty:${TAG:-latest}
-    env_file:
-      - ../../.env
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
       - docker-data:/app/docker-data
@@ -47,8 +45,6 @@ services:
         condition: service_completed_successfully
       redis:
         condition: service_started
-      postgresql:
-        condition: service_healthy
     networks:
       - coolify-net
     healthcheck:
