@@ -32,3 +32,42 @@ docker logs <container_id> sh
 ```bash
 docker exec -it server-gkw4sc0kwokw8kwwok0gocsw-190816991224 sh
 ```
+
+
+
+
+Notes:
+POSTGRESQL-work-space
+
+POSTGRES_PORT=5432
+POSTGRES_SUPERPASS=postgresqlBioCentra2025!!
+POSTGRES_SUPERUSER=admin
+
+https://github.com/HPABio/work_stack.git
+
+
+root@srv814301:~# redis://redis:6379
+root@srv814301:~# s:6379: No such server-gkw4sc0kwokw8kwwok0gocsw-212943709202  sh
+root@srv814301:~# docker exec -it server-gkw4sc0kwokw8kwwok0gocsw-212943709202 sh                                 
+apk add busybox-extras # if Alpine
+/app/packages/twenty-server $ apk add busybox-extras
+ERROR: Unable to lock database: Permission denied
+ERROR: Failed to open apk database: Permission denied
+/app/packages/twenty-server $ nc -zv redis 6379
+redis (10.0.6.4:6379) open
+/app/packages/twenty-server $ Command 'apk' not found, did you mean:
+  command 'ark' from snap ark (25.04.0)
+  command 'ack' from deb ack (3.7.0-1)
+  command 'apt' from deb apt (2.7.6)
+  command 'ark' from deb ark (4:23.08.4-0ubuntu1)
+  command 'awk' from deb gawk (1:5.2.1-2)
+  command 'awk' from deb mawk (1.3.4.20231126-1)
+  command 'awk' from deb original-awk (2023-11-27-1)
+  command 'apg' from deb apg (2.2.3.dfsg.1-5build2)
+See 'snap info <snapname>' for additional versions.
+nc: getaddrinfo for host "redis" port 6379: Temporary failure in name resolution
+root@srv814301:~# 
+
+services:
+  redis:
+    image: r
