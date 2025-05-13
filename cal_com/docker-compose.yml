@@ -27,7 +27,6 @@ services:
     labels:
       - traefik.enable=true
       - 'traefik.http.routers.calcom.rule=Host("calcom.biocentra.eu")'
-      - traefik.http.routers.calcom.entrypoints=websecure
       - traefik.http.routers.calcom.tls=true
       - traefik.http.routers.calcom.tls.certresolver=letsencrypt
       - traefik.http.services.calcom.loadbalancer.server.port=3000
