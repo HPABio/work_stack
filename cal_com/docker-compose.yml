@@ -12,8 +12,8 @@ services:
       - GENERIC_TIMEZONE=Europe/Berlin
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY}
-      - NEXT_PUBLIC_WEBAPP_URL=https://calendar.biocentra.eu
-      - NEXT_PUBLIC_API_V2_URL=https://calendar.biocentra.eu/api/v2
+      - NEXT_PUBLIC_WEBAPP_URL=https://calcom.biocentra.eu
+      - NEXT_PUBLIC_API_V2_URL=https://calcom.biocentra.eu/api/v2
       - NEXT_PUBLIC_LICENSE_CONSENT=true
       - CALCOM_TELEMETRY_DISABLED=true
       - CALCOM_HOST=https://calcom.biocentra.eu
