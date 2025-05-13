@@ -11,7 +11,6 @@ services:
     command: |
       bash -c "chown -R 1000:1000 /tmp/server-local-data && chown -R 1000:1000 /tmp/docker-data"
     networks:
-      - coolify
       - coolify-net
     restart: 'no'
 
@@ -101,7 +100,6 @@ services:
       redis:
         condition: service_started
     networks:
-      - coolify
       - coolify-net
     restart: always
 
@@ -111,7 +109,6 @@ services:
       - '--maxmemory-policy'
       - noeviction
     networks:
-      - collify
       - coolify-net
     restart: always
 
@@ -121,8 +118,6 @@ volumes:
 
 networks:
   coolify-net:
-    external: true
-  coolify:
     external: true
 
 
