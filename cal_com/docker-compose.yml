@@ -24,7 +24,8 @@ services:
       - NEXT_PUBLIC_LICENSE_CONSENT=true
       - CALCOM_TELEMETRY_DISABLED=true
 
-      - ALLOWED_HOSTNAMES=https://calcom.biocentra.eu
+      - ALLOWED_HOSTNAMES="\"calcom.biocentra.eu\""
+
       - NEXT_PUBLIC_WEBAPP_URL=https://calcom.biocentra.eu
       - NEXT_PUBLIC_API_V2_URL=https://calcom.biocentra.eu/api/v2
       - CALCOM_HOST=calcom.biocentra.eu
