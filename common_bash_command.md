@@ -93,6 +93,7 @@ services:
     docker ps --format "table {{.Names}}\t{{.Image}}"
 
 
+docker exec -it postgresql-mccogkg480o40wwkwssk4s8g-223657707597 psql -U admin 
 
 
 -- Terminate connections to drop the DB
