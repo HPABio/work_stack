@@ -101,6 +101,7 @@ services:
       redis:
         condition: service_started
     networks:
+      - coolify
       - coolify-net
     restart: always
 
@@ -110,6 +111,7 @@ services:
       - '--maxmemory-policy'
       - noeviction
     networks:
+      - collify
       - coolify-net
     restart: always
 
@@ -119,6 +121,8 @@ volumes:
 
 networks:
   coolify-net:
+    external: true
+  coolify:
     external: true
 
 
