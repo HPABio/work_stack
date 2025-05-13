@@ -5,6 +5,7 @@ services:
     image: docker.n8n.io/n8nio/n8n
     restart: always
     networks:
+      - coolify
       - coolify-net
     environment:
       - N8N_PORT=3000
@@ -42,5 +43,7 @@ volumes:
   n8n-data:
 
 networks:
+  coolify:
+    external: true
   coolify-net:
     external: true
