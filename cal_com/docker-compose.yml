@@ -13,6 +13,15 @@ services:
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY}
 
+      #email
+      - EMAIL_FROM=hendrikcooper@gmx.de
+      - EMAIL_FROM_NAME=Cal.com
+      - EMAIL_DRIVER=smtp
+      - EMAIL_SMTP_HOST=mail.gmx.net
+      - EMAIL_SMTP_PORT=587
+      - EMAIL_SMTP_USER=hendrikcooper@gmx.de
+     
+
 
       - NEXT_PUBLIC_LICENSE_CONSENT=true
       - CALCOM_TELEMETRY_DISABLED=true

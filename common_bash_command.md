@@ -91,3 +91,23 @@ services:
 
 
     docker ps --format "table {{.Names}}\t{{.Image}}"
+
+
+
+
+-- Terminate connections to drop the DB
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'calcom';
+
+DROP DATABASE IF EXISTS calcom;
+CREATE DATABASE calcom OWNER calcom_user;
+
+\connect calcom
+
+GRANT USAGE ON SCHEMA public TO calcom_user;
+GRANT CREATE ON SCHEMA public TO calcom_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO calcom_user;
+
+
+
+docker exec -it <container_name> sh
+npx prisma migrate deploy
