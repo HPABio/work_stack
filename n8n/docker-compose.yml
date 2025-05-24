@@ -25,6 +25,7 @@ services:
       - coolify-net
     environment:
       - N8N_PORT=3000
+      - N8N_ENV=production
       - N8N_PROTOCOL=https
       - N8N_HOST=n8n.biocentra.eu
       - 'N8N_EDITOR_BASE_URL=https://n8n.biocentra.eu'
@@ -33,10 +34,10 @@ services:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_USER=${SERVICE_USER_POSTGRES}
-      - DB_POSTGRESDB_PASSWORD=${SERVICE_PASSWORD_POSTGRES}
+      - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+      - DB_POSTGRESDB_SCHEMA=public
       # - PG_DATABASE_URL=postgres://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
-      # - DB_POSTGRESDB_SCHEMA=public
 
 
       - GENERIC_TIMEZONE=Europe/Berlin
