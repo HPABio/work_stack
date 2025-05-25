@@ -1,5 +1,25 @@
 version: "3.8"
 
+
+calcom:
+    image: calcom.docker.scarf.sh/calcom/cal.com
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+       
+      network: stack
+    restart: always
+    networks:
+      - stack
+    ports:
+      - 3000:3000
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
+      - DATABASE_DIRECT_URL=${DATABASE_URL}
+    depends_on:
+      - database
 services:
   calcom:
     image: calcom.docker.scarf.sh/calcom/cal.com
@@ -7,6 +27,14 @@ services:
     networks:
       - coolify-net
     environment:
+      - NEXT_PUBLIC_WEBAPP_URL=${NEXT_PUBLIC_WEBAPP_URL}
+      - NEXT_PUBLIC_API_V2_URL=${NEXT_PUBLIC_API_V2_URL}
+      - NEXT_PUBLIC_LICENSE_CONSENT=${NEXT_PUBLIC_LICENSE_CONSENT}
+      - CALCOM_TELEMETRY_DISABLED=${CALCOM_TELEMETRY_DISABLED}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_DIRECT_URL=${DATABASE_URL}
       - NODE_ENV=production
       - TZ=Europe/Berlin
       - GENERIC_TIMEZONE=Europe/Berlin
@@ -20,10 +48,8 @@ services:
       - EMAIL_SMTP_PORT=587
       - EMAIL_SMTP_USER=schnack-schnick@gmx.de
       - EMAIL_SMTP_PASSWORD=${EMAIL_SMTP_PASSWORD}
-
       - NEXT_PUBLIC_LICENSE_CONSENT=true
       - CALCOM_TELEMETRY_DISABLED=true # Disable telemetry which is the collection of anonymous usage data
-
       - NEXT_PUBLIC_WEBAPP_URL=https://calcom.biocentra.eu
       - NEXT_PUBLIC_API_V2_URL=https://calcom.biocentra.eu/api/v2
       - CALCOM_HOST=calcom.biocentra.eu
