@@ -21,7 +21,7 @@ services:
       - 'docker-data:/app/docker-data'
     environment:
       - NODE_PORT=3000
-      - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
       - STORAGE_TYPE=${STORAGE_TYPE}
@@ -29,6 +29,11 @@ services:
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       - APP_SECRET=${APP_SECRET}
+      - DISABLE_DB_MIGRATIONS=false
+
+
+
+
 
     labels:
       - traefik.enable=true
@@ -60,7 +65,7 @@ services:
       - worker:prod
     environment:
       - POSTGRES_PORT=5432
-      - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
       - STORAGE_TYPE=${STORAGE_TYPE}
@@ -68,6 +73,7 @@ services:
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       - APP_SECRET=${APP_SECRET}
+      - DISABLE_DB_MIGRATIONS=true
 
 
 
