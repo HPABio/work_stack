@@ -30,7 +30,7 @@ services:
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       - APP_SECRET=${APP_SECRET}
 
-      - DISABLE_DB_MIGRATIONS=false
+      - DISABLE_DB_MIGRATIONS=true
 
     labels:
       - traefik.enable=true
@@ -70,8 +70,6 @@ services:
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       - APP_SECRET=${APP_SECRET}
-      
-      - DISABLE_DB_MIGRATIONS=true
 
 
 
