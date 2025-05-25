@@ -49,6 +49,7 @@ services:
       - N8N_ENV=production
       - N8N_PROTOCOL=https
       - N8N_HOST=n8n.biocentra.eu
+      - N8N_RUNNERS_ENABLED=true
       - 'N8N_EDITOR_BASE_URL=https://n8n.biocentra.eu'
       - 'WEBHOOK_URL=https://n8n.biocentra.eu'
 
@@ -61,6 +62,7 @@ services:
       - PG_DATABASE_URL=postgresql://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
 
 
+      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
       - GENERIC_TIMEZONE=Europe/Berlin
       - TZ=Europe/Berlin
       - NODE_ENV=production
@@ -99,6 +101,7 @@ services:
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
       - DB_POSTGRESDB_SCHEMA=public
 
+      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
       - EXECUTIONS_MODE=queue
       - QUEUE_BULL_REDIS_HOST=redis
       - QUEUE_HEALTH_CHECK_ACTIVE=true
@@ -108,6 +111,7 @@ services:
       - NODE_ENV=production
 
       - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - N8N_RUNNERS_ENABLED=true
     depends_on:
       redis:
         condition: service_healthy
