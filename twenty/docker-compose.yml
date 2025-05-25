@@ -4,7 +4,6 @@ name: twenty
 services:
 
   server:
-    build: .
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - 'server-local-data:/app/packages/twenty-server/.local-storage'
