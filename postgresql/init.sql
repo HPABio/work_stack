@@ -8,16 +8,16 @@ GRANT CREATE ON SCHEMA public TO n8n_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO n8n_user;
 
 -- calcom
-CREATE DATABASE calcom;
 CREATE USER calcom_user WITH ENCRYPTED PASSWORD 'calcomBioCentra2025!!';
+CREATE DATABASE calcom WITH OWNER calcom_user;
 GRANT ALL PRIVILEGES ON DATABASE calcom TO calcom_user;
 GRANT USAGE ON SCHEMA public TO calcom_user;
 GRANT CREATE ON SCHEMA public TO calcom_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO calcom_user;
 
 -- twenty (optional)
-CREATE DATABASE twenty;
 CREATE USER twenty_user WITH ENCRYPTED PASSWORD 'twentyBioCentra2025!!';
+CREATE DATABASE twenty WITH OWNER twenty_user;
 GRANT ALL PRIVILEGES ON DATABASE twenty TO twenty_user;
 GRANT USAGE ON SCHEMA public TO twenty_user;
 GRANT CREATE ON SCHEMA public TO twenty_user;
