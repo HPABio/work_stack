@@ -23,7 +23,7 @@ services:
       - NODE_PORT=3000
       - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
-      - REDIS_URL=${TWENTY_REDIS_URL}
+      - REDIS_URL=redis://redis:6379
       - STORAGE_TYPE=${STORAGE_TYPE}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
@@ -42,7 +42,7 @@ services:
       change-vol-ownership:
         condition: service_completed_successfully
       redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       - coolify-net
     healthcheck:
@@ -63,7 +63,7 @@ services:
       - POSTGRES_PORT=5432
       - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
-      - REDIS_URL=${TWENTY_REDIS_URL}
+      - REDIS_URL=redis://redis:6379
       - STORAGE_TYPE=${STORAGE_TYPE}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
@@ -100,19 +100,22 @@ services:
       server:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       - coolify-net
     restart: always
 
   redis:
     image: redis:7
-    command:
-      - '--maxmemory-policy'
-      - noeviction
+    restart: always
+    command: ["--maxmemory-policy", "noeviction"]
     networks:
       - coolify-net
-    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   docker-data:
