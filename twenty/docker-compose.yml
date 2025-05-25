@@ -21,7 +21,7 @@ services:
       - 'docker-data:/app/docker-data'
     environment:
       - NODE_PORT=3000
-      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgres:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=${TWENTY_REDIS_URL}
       - STORAGE_TYPE=${STORAGE_TYPE}
@@ -61,7 +61,7 @@ services:
       - worker:prod
     environment:
       - POSTGRES_PORT=5432
-      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgres:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=${TWENTY_REDIS_URL}
       - STORAGE_TYPE=${STORAGE_TYPE}
