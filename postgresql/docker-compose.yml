@@ -73,6 +73,7 @@ volumes:
   postgresql-data:
   psql-twenty-data:
   psql-calcom-data:
+  psql-huly-data:
 
 networks:
   coolify-net:

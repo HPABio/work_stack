@@ -10,12 +10,14 @@ services:
       - 'server-local-data:/app/packages/twenty-server/.local-storage'
     environment:
       - NODE_PORT=3000
-      - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@psql-twenty:5432/default
+      - NODE_ENV=production
+
       - PG_DATABASE_USER=${TWENTY_DB_USER}
-      - PG_DATABASE_HOSTNAME=postgresql
+      - PG_DATABASE_HOSTNAME=psql-twenty
       - PG_DATABASE_PASSWORD=${TWENTY_DB_PASS}
       - PG_DATABASE_NAME=${TWENTY_DB}
-      - PG_DATABASE_HOST=postgresql
+      - PG_DATABASE_HOST=psql-twenty
       - PG_DATABASE_PORT=5432
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
@@ -78,12 +80,12 @@ services:
       - yarn
       - worker:prod
     environment:
-      - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@psql-twenty:5432/default
       - PG_DATABASE_USER=${TWENTY_DB_USER}
-      - PG_DATABASE_HOSTNAME=postgresql
+      - PG_DATABASE_HOSTNAME=psql-twenty
       - PG_DATABASE_PASSWORD=${TWENTY_DB_PASS}
       - PG_DATABASE_NAME=${TWENTY_DB}
-      - PG_DATABASE_HOST=postgresql
+      - PG_DATABASE_HOST=psql-twenty
       - PG_DATABASE_PORT=5432
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
