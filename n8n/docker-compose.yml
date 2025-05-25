@@ -62,7 +62,7 @@ services:
       - PG_DATABASE_URL=postgresql://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
 
 
-      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
+
       - GENERIC_TIMEZONE=Europe/Berlin
       - TZ=Europe/Berlin
       - NODE_ENV=production
