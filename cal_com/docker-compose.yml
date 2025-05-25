@@ -22,22 +22,27 @@ services:
       - EMAIL_SMTP_PASSWORD=${EMAIL_SMTP_PASSWORD}
 
       - NEXT_PUBLIC_LICENSE_CONSENT=true
-      - CALCOM_TELEMETRY_DISABLED=true
-
-      - ALLOWED_HOSTNAMES=calcom.biocentra.eu
+      - CALCOM_TELEMETRY_DISABLED=true # Disable telemetry which is the collection of anonymous usage data
 
       - NEXT_PUBLIC_WEBAPP_URL=https://calcom.biocentra.eu
       - NEXT_PUBLIC_API_V2_URL=https://calcom.biocentra.eu/api/v2
       - CALCOM_HOST=calcom.biocentra.eu
 
 
-      - CALCOM_DB=calcom
-      - CALCOM_DB_USER=calcom_user
+      - CALCOM_DB=default
+      - CALCOM_DB_USER=admin
       - CALCOM_DB_PASS=${CALCOM_DB_PASS}
-      - DATABASE_URL=postgresql://${CALCOM_DB_USER}:${CALCOM_DB_PASS}@postgresql:5432/${CALCOM_DB}
-      - DATABASE_DIRECT_URL=postgresql://${CALCOM_DB_USER}:${CALCOM_DB_PASS}@postgresql:5432/${CALCOM_DB}
-    ports:
-      - 3000:3000
+      - PG_DATABASE_USER=admin
+      - PG_DATABASE_HOSTNAME=psql-calcom
+      - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD}
+      - PG_DATABASE_NAME=default
+      - PG_DATABASE_HOST=psql-calcom
+      - PG_DATABASE_PORT=5432
+      - DATABASE_URL=postgres://${CALCOM_DB_USER}:${CALCOM_DB_PASS}@psql-calcom:5432/default
+      - DATABASE_DIRECT_URL=postgres://${CALCOM_DB_USER}:${CALCOM_DB_PASS}@psql-calcom:5432/default
+      - REDIS_URL=redis://redis:6379
+    # ports:
+    #   - 3000:3000
     labels:
       - traefik.enable=true
       - 'traefik.http.routers.calcom.rule=Host("calcom.biocentra.eu")'
