@@ -1,25 +1,5 @@
 version: "3.8"
 
-
-calcom:
-    image: calcom.docker.scarf.sh/calcom/cal.com
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-       
-      network: stack
-    restart: always
-    networks:
-      - stack
-    ports:
-      - 3000:3000
-    env_file: .env
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
-      - DATABASE_DIRECT_URL=${DATABASE_URL}
-    depends_on:
-      - database
 services:
   calcom:
     image: calcom.docker.scarf.sh/calcom/cal.com
@@ -38,8 +18,8 @@ services:
       - NODE_ENV=production
       - TZ=Europe/Berlin
       - GENERIC_TIMEZONE=Europe/Berlin
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET} #length 32 characters
+      - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY} #length 32 characters
 
       - EMAIL_FROM=schnack-schnick@gmx.de
       - EMAIL_FROM_NAME=Cal.com
