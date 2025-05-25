@@ -21,7 +21,7 @@ services:
       - 'docker-data:/app/docker-data'
     environment:
       - NODE_PORT=3000
-      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
       - STORAGE_TYPE=${STORAGE_TYPE}
@@ -29,10 +29,7 @@ services:
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       - APP_SECRET=${APP_SECRET}
-      # - DISABLE_DB_MIGRATIONS=false
-
-
-
+      - DISABLE_DB_MIGRATIONS=false
 
 
     labels:
@@ -45,8 +42,8 @@ services:
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
-      redis:
-        condition: service_healthy
+      # redis:
+      #   condition: service_healthy
     networks:
       - coolify-net
     healthcheck:
@@ -65,7 +62,7 @@ services:
       - worker:prod
     environment:
       - POSTGRES_PORT=5432
-      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
       - STORAGE_TYPE=${STORAGE_TYPE}
@@ -73,7 +70,7 @@ services:
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       - APP_SECRET=${APP_SECRET}
-      # - DISABLE_DB_MIGRATIONS=true
+      - DISABLE_DB_MIGRATIONS=true
 
 
 
@@ -104,23 +101,23 @@ services:
     depends_on:
       server:
         condition: service_healthy
-      redis:
-        condition: service_healthy
+      # redis:
+      #   condition: service_healthy
     networks:
       - coolify-net
     restart: always
 
-  redis:
-    image: redis:7
-    restart: always
-    command: ["--maxmemory-policy", "noeviction"]
-    networks:
-      - coolify-net
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+  # redis:
+  #   image: redis:7
+  #   restart: always
+  #   command: ["--maxmemory-policy", "noeviction"]
+  #   networks:
+  #     - coolify-net
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 10
 
 volumes:
   docker-data:
