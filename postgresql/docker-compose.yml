@@ -9,7 +9,7 @@ services:
       - coolify-net
     volumes:
       - postgresql-data:/var/lib/postgresql/data
-      - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     environment:
       - POSTGRES_USER=${POSTGRES_SUPERUSER}
       - POSTGRES_PASSWORD=${POSTGRES_SUPERPASS}
