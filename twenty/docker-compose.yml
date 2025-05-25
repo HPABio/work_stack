@@ -4,12 +4,19 @@ name: twenty
 services:
 
   server:
+    build: .
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - 'server-local-data:/app/packages/twenty-server/.local-storage'
     environment:
       - NODE_PORT=3000
       - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_USER=${TWENTY_DB_USER}
+      - PG_DATABASE_HOSTNAME=postgresql
+      - PG_DATABASE_PASSWORD=${TWENTY_DB_PASS}
+      - PG_DATABASE_NAME=${TWENTY_DB}
+      - PG_DATABASE_HOST=postgresql
+      - PG_DATABASE_PORT=5432
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
 
@@ -20,6 +27,7 @@ services:
 
       - APP_SECRET=${APP_SECRET}
       - DISABLE_DB_MIGRATIONS=false
+      - SIGN_IN_PREFILLED=false
 
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
@@ -71,6 +79,12 @@ services:
       - worker:prod
     environment:
       - PG_DATABASE_URL=postgresql://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
+      - PG_DATABASE_USER=${TWENTY_DB_USER}
+      - PG_DATABASE_HOSTNAME=postgresql
+      - PG_DATABASE_PASSWORD=${TWENTY_DB_PASS}
+      - PG_DATABASE_NAME=${TWENTY_DB}
+      - PG_DATABASE_HOST=postgresql
+      - PG_DATABASE_PORT=5432
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
       - DISABLE_DB_MIGRATIONS=true

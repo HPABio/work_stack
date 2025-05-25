@@ -18,9 +18,61 @@ services:
       interval: 5s
       timeout: 20s
       retries: 10
+  psql-twenty:
+    image: postgres:16-alpine
+    container_name: psql-twenty
+    restart: always
+    networks:
+      - coolify-net
+    volumes:
+      - psql-twenty-data:/var/lib/psql-twenty/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_SUPERUSER}
+      - POSTGRES_PASSWORD=${POSTGRES_SUPERPASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} || exit 1"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+  
+  psql-calcom:
+    image: postgres:16-alpine
+    container_name: psql-calcom
+    restart: always
+    networks:
+      - coolify-net
+    volumes:
+      - psql-calcom-data:/var/lib/psql-calcom/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_SUPERUSER}
+      - POSTGRES_PASSWORD=${POSTGRES_SUPERPASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} || exit 1"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+  
+  psql-huly:
+    image: postgres:16-alpine
+    container_name: psql-huly
+    restart: always
+    networks:
+      - coolify-net
+    volumes:
+      - psql-huly-data:/var/lib/psql-huly/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_SUPERUSER}
+      - POSTGRES_PASSWORD=${POSTGRES_SUPERPASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} || exit 1"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
 
 volumes:
   postgresql-data:
+  psql-twenty-data:
+  psql-calcom-data:
 
 networks:
   coolify-net:
