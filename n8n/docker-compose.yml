@@ -81,12 +81,12 @@ services:
       - 'WEBHOOK_URL=https://n8n.biocentra.eu'
 
       - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_HOST=postgresql
       - DB_POSTGRESDB_PORT=5432
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
       - DB_POSTGRESDB_SCHEMA=public
-      - PG_DATABASE_URL=postgres://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
+      - PG_DATABASE_URL=postgresql://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
 
 
       - GENERIC_TIMEZONE=Europe/Berlin
@@ -115,7 +115,7 @@ services:
       - coolify-net
     environment:
       - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_HOST=postgresql
       - DB_POSTGRESDB_PORT=5432
       - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
