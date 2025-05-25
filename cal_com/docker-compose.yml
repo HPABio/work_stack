@@ -3,7 +3,7 @@ version: "3.8"
 services:
   calcom:
     image: calcom.docker.scarf.sh/calcom/cal.com
-    command: 'yarn'
+    command: 'yarn dx'
     restart: always
     networks:
       - coolify-net
