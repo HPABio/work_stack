@@ -22,7 +22,7 @@ services:
     environment:
       - NODE_PORT=3000
       - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@postgresql:${POSTGRES_PORT}/${TWENTY_DB}
-      - SERVER_URL='www.twenty.biocentra.eu'
+      - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=${TWENTY_REDIS_URL}
       - STORAGE_TYPE=${STORAGE_TYPE}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
