@@ -6,37 +6,6 @@ volumes:
   n8n_storage:
   redis_storage:
 
-x-shared: &shared
-  restart: always
-  image: docker.n8n.io/n8nio/n8n
-  environment:
-    - DB_TYPE=postgresdb
-    - DB_POSTGRESDB_HOST=postgres
-    - DB_POSTGRESDB_PORT=5432
-    - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
-    - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
-    - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
-    - EXECUTIONS_MODE=queue
-    - QUEUE_BULL_REDIS_HOST=redis
-    - QUEUE_HEALTH_CHECK_ACTIVE=true
-    - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
-  # links:
-  #   - postgres
-  #   - redis
-  volumes:
-    - n8n_storage:/home/node/.n8n
-  labels:
-  - traefik.enable=true
-  - 'traefik.http.routers.n8n.rule=Host("n8n.biocentra.eu")'
-  - traefik.http.routers.n8n.tls.certresolver=letsencrypt
-  - traefik.http.services.n8n.loadbalancer.server.port=3000
-  - traefik.http.routers.n8n.entrypoints=https
-  depends_on:
-    redis:
-      condition: service_healthy
-    postgres:
-      condition: service_healthy
-
 services:
   # postgres:
   #   image: postgres:16
@@ -58,6 +27,9 @@ services:
 
   redis:
     image: redis:6-alpine
+    networks:
+      - coolify-net
+    container_name: redis
     restart: always
     volumes:
       - redis_storage:/data
@@ -101,6 +73,11 @@ services:
       - traefik.http.routers.n8n.tls.certresolver=letsencrypt
       - traefik.http.services.n8n.loadbalancer.server.port=3000
       - traefik.http.routers.n8n.entrypoints=https
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy  
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ || exit 1"]
       interval: 10s
@@ -110,6 +87,8 @@ services:
   n8n-worker:
     image: docker.n8n.io/n8nio/n8n
     command: worker
+    volumes:
+      - n8n-data:/home/node/.n8n
     restart: always
     networks:
       - coolify-net
@@ -132,6 +111,8 @@ services:
 
       - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
     depends_on:
+      poestgresql:
+        condition: service_healthy
       redis:
         condition: service_healthy
 
