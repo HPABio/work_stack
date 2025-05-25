@@ -74,8 +74,6 @@ services:
       - traefik.http.services.n8n.loadbalancer.server.port=3000
       - traefik.http.routers.n8n.entrypoints=https
     depends_on:
-      postgresql:
-        condition: service_healthy
       redis:
         condition: service_healthy  
     healthcheck:
@@ -111,8 +109,6 @@ services:
 
       - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
     depends_on:
-      poestgresql:
-        condition: service_healthy
       redis:
         condition: service_healthy
 
