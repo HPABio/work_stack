@@ -38,23 +38,23 @@ x-shared: &shared
       condition: service_healthy
 
 services:
-  postgres:
-    image: postgres:16
-    restart: always
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - POSTGRES_NON_ROOT_USER
-      - POSTGRES_NON_ROOT_PASSWORD
-    volumes:
-      - db_storage:/var/lib/postgresql/data
-      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 10
+  # postgres:
+  #   image: postgres:16
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER
+  #     - POSTGRES_PASSWORD
+  #     - POSTGRES_DB
+  #     - POSTGRES_NON_ROOT_USER
+  #     - POSTGRES_NON_ROOT_PASSWORD
+  #   volumes:
+  #     - db_storage:/var/lib/postgresql/data
+  #     - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+  #   healthcheck:
+  #     test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
 
   redis:
     image: redis:6-alpine
@@ -86,7 +86,7 @@ services:
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
       - DB_POSTGRESDB_SCHEMA=public
-      # - PG_DATABASE_URL=postgres://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
+      - PG_DATABASE_URL=postgres://${DB_POSTGRESDB_USER}:${DB_POSTGRESDB_PASSWORD}@postgresql:${DB_POSTGRESDB_PORT}/${POSTGRES_DB}
 
 
       - GENERIC_TIMEZONE=Europe/Berlin
@@ -108,7 +108,31 @@ services:
       retries: 10
 
   n8n-worker:
-    <<: *shared
+    image: docker.n8n.io/n8nio/n8n
     command: worker
+    restart: always
+    networks:
+      - coolify-net
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+      - DB_POSTGRESDB_SCHEMA=public
+
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_HEALTH_CHECK_ACTIVE=true
+
+      - GENERIC_TIMEZONE=Europe/Berlin
+      - TZ=Europe/Berlin
+      - NODE_ENV=production
+
+      - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
     depends_on:
-      - n8n
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
