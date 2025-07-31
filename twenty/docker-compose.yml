@@ -21,7 +21,6 @@ services:
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
 
-      - APP_SECRET=${APP_SECRET}
       - DISABLE_DB_MIGRATIONS=false
       - SIGN_IN_PREFILLED=false
 
@@ -64,7 +63,7 @@ services:
     networks:
       - coolify-net
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz 
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/healthz"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -140,9 +139,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    depends_on:
-      db-twenty:
-        condition: service_healthy
     restart: always
 
  redis-twenty:
