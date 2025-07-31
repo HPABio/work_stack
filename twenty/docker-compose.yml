@@ -1,4 +1,3 @@
-version: '3.8'
 name: twenty
 services:
   server:
@@ -7,15 +6,13 @@ services:
       - 'server-local-data:/app/packages/twenty-server/.local-storage'
     environment:
       - NODE_PORT=3000
-      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@psql-twenty:5432/default
       - NODE_ENV=production
 
-      - PG_DATABASE_USER=${TWENTY_DB_USER}
-      - PG_DATABASE_HOSTNAME=psql-twenty
-      - PG_DATABASE_PASSWORD=${TWENTY_DB_PASS}
-      - PG_DATABASE_NAME=${TWENTY_DB}
-      - PG_DATABASE_HOST=psql-twenty
-      - PG_DATABASE_PORT=5432
+      - PG_DATABASE_URL=postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      - PG_DATABASE_USER=${PG_DATABASE_USER:-postgres}
+      - PG_DATABASE_HOST=${PG_DATABASE_HOST:-db-twenty}
+      - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
+      - PG_DATABASE_PORT=${PG_DATABASE_PORT:-5432}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis:6379
 
@@ -28,12 +25,13 @@ services:
       - DISABLE_DB_MIGRATIONS=false
       - SIGN_IN_PREFILLED=false
 
-      # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
-      # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
-      # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
-      # AUTH_GOOGLE_CLIENT_SECRET: ${AUTH_GOOGLE_CLIENT_SECRET}
-      # AUTH_GOOGLE_CALLBACK_URL: ${AUTH_GOOGLE_CALLBACK_URL}
-      # AUTH_GOOGLE_APIS_CALLBACK_URL: ${AUTH_GOOGLE_APIS_CALLBACK_URL}
+      - APP_SECRET=${APP_SECRET}
+      - MESSAGING_PROVIDER_GMAIL_ENABLED=${MESSAGING_PROVIDER_GMAIL_ENABLED}
+      - CALENDAR_PROVIDER_GOOGLE_ENABLED=${CALENDAR_PROVIDER_GOOGLE_ENABLED}
+      - AUTH_GOOGLE_CLIENT_ID=${AUTH_GOOGLE_CLIENT_ID}
+      - AUTH_GOOGLE_CLIENT_SECRET=${AUTH_GOOGLE_CLIENT_SECRET}
+      - AUTH_GOOGLE_CALLBACK_URL=${AUTH_GOOGLE_CALLBACK_URL}
+      - AUTH_GOOGLE_APIS_CALLBACK_URL=${AUTH_GOOGLE_APIS_CALLBACK_URL}
 
       # CALENDAR_PROVIDER_MICROSOFT_ENABLED: ${CALENDAR_PROVIDER_MICROSOFT_ENABLED}
       # MESSAGING_PROVIDER_MICROSOFT_ENABLED: ${MESSAGING_PROVIDER_MICROSOFT_ENABLED}
@@ -60,6 +58,9 @@ services:
       - traefik.http.routers.twenty.tls.certresolver=letsencrypt
       - traefik.http.services.twenty.loadbalancer.server.port=3000
 
+    depends_on:
+      db-twenty:
+        condition: service_healthy
     networks:
       - coolify-net
     healthcheck:
@@ -77,16 +78,15 @@ services:
       - yarn
       - worker:prod
     environment:
-      - PG_DATABASE_URL=postgres://${TWENTY_DB_USER}:${TWENTY_DB_PASS}@psql-twenty:5432/default
-      - PG_DATABASE_USER=${TWENTY_DB_USER}
-      - PG_DATABASE_HOSTNAME=psql-twenty
-      - PG_DATABASE_PASSWORD=${TWENTY_DB_PASS}
-      - PG_DATABASE_NAME=${TWENTY_DB}
-      - PG_DATABASE_HOST=psql-twenty
-      - PG_DATABASE_PORT=5432
+      - PG_DATABASE_URL=postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      - PG_DATABASE_USER=${PG_DATABASE_USER:-postgres}
+      - PG_DATABASE_HOST=${PG_DATABASE_HOST:-db-twenty}
+      - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
+      - PG_DATABASE_PORT=${PG_DATABASE_PORT:-5432}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
-      - REDIS_URL=redis://redis:6379
-      - DISABLE_DB_MIGRATIONS=true
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - DISABLE_DB_MIGRATIONS="true" # it already runs on the server
+      - DISABLE_CRON_JOBS_REGISTRATION="true" # it already runs on the server
 
       - STORAGE_TYPE=${STORAGE_TYPE}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
@@ -94,12 +94,12 @@ services:
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
       
       - APP_SECRET=${APP_SECRET}
-      # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
-      # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
-      # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
-      # AUTH_GOOGLE_CLIENT_SECRET: ${AUTH_GOOGLE_CLIENT_SECRET}
-      # AUTH_GOOGLE_CALLBACK_URL: ${AUTH_GOOGLE_CALLBACK_URL}
-      # AUTH_GOOGLE_APIS_CALLBACK_URL: ${AUTH_GOOGLE_APIS_CALLBACK_URL}
+      - MESSAGING_PROVIDER_GMAIL_ENABLED=${MESSAGING_PROVIDER_GMAIL_ENABLED}
+      - CALENDAR_PROVIDER_GOOGLE_ENABLED=${CALENDAR_PROVIDER_GOOGLE_ENABLED}
+      - AUTH_GOOGLE_CLIENT_ID=${AUTH_GOOGLE_CLIENT_ID}
+      - AUTH_GOOGLE_CLIENT_SECRET=${AUTH_GOOGLE_CLIENT_SECRET}
+      - AUTH_GOOGLE_CALLBACK_URL=${AUTH_GOOGLE_CALLBACK_URL}
+      - AUTH_GOOGLE_APIS_CALLBACK_URL=${AUTH_GOOGLE_APIS_CALLBACK_URL}
 
       # CALENDAR_PROVIDER_MICROSOFT_ENABLED: ${CALENDAR_PROVIDER_MICROSOFT_ENABLED}
       # MESSAGING_PROVIDER_MICROSOFT_ENABLED: ${MESSAGING_PROVIDER_MICROSOFT_ENABLED}
@@ -118,28 +118,40 @@ services:
       # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
     depends_on:
+      db-twenty:
+        condition: service_healthy
       server:
         condition: service_healthy
-      # redis:
-      #   condition: service_healthy
+      redis-twenty:
+        condition: service_healthy
     networks:
       - coolify-net
     restart: always
+    
+  db-twenty:
+    image: postgres:16
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+    healthcheck:
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      db-twenty:
+        condition: service_healthy
+    restart: always
 
-  # redis:
-  #   image: redis:7
-  #   restart: always
-  #   command: ["--maxmemory-policy", "noeviction"]
-  #   networks:
-  #     - coolify-net
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 5s
-  #     timeout: 3s
-  #     retries: 10
+   redis-twenty:
+     image: redis
+     restart: always
+     command: ["--maxmemory-policy", "noeviction"]
 
 volumes:
-  # docker-data:
+  db-data:
   server-local-data:
 
 networks:
