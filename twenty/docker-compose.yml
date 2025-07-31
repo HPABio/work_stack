@@ -1,6 +1,7 @@
 version: '3.8'  
 name: twenty
 services:
+
   server:
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
@@ -49,7 +50,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: always
+      restart: always
 
   worker:
     image: twentycrm/twenty:${TAG:-latest}
@@ -97,7 +98,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: always
+      restart: always
 
  redis-twenty:
    image: redis
