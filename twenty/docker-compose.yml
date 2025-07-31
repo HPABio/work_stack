@@ -1,3 +1,4 @@
+version: '3.8'  
 name: twenty
 services:
   server:
@@ -8,7 +9,7 @@ services:
       - NODE_PORT=3000
       - NODE_ENV=production
 
-      - PG_DATABASE_URL=postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      - PG_DATABASE_URL=postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db-twenty}:${PG_DATABASE_PORT:-5432}/default
       - PG_DATABASE_USER=${PG_DATABASE_USER:-postgres}
       - PG_DATABASE_HOST=${PG_DATABASE_HOST:-db-twenty}
       - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
@@ -40,9 +41,7 @@ services:
       - traefik.http.routers.twenty.tls.certresolver=letsencrypt
       - traefik.http.services.twenty.loadbalancer.server.port=3000
 
-    depends_on:
-      db-twenty:
-        condition: service_healthy
+    
     networks:
       - coolify-net
     healthcheck:
@@ -60,7 +59,7 @@ services:
       - yarn
       - worker:prod
     environment:
-      - PG_DATABASE_URL=postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      - PG_DATABASE_URL=postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db-twenty}:${PG_DATABASE_PORT:-5432}/default
       - PG_DATABASE_USER=${PG_DATABASE_USER:-postgres}
       - PG_DATABASE_HOST=${PG_DATABASE_HOST:-db-twenty}
       - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
@@ -82,14 +81,6 @@ services:
       - AUTH_GOOGLE_CLIENT_SECRET=${AUTH_GOOGLE_CLIENT_SECRET}
       - AUTH_GOOGLE_CALLBACK_URL=${AUTH_GOOGLE_CALLBACK_URL}
       - AUTH_GOOGLE_APIS_CALLBACK_URL=${AUTH_GOOGLE_APIS_CALLBACK_URL}
-
-    depends_on:
-      db-twenty:
-        condition: service_healthy
-      server:
-        condition: service_healthy
-      redis-twenty:
-        condition: service_healthy
     networks:
       - coolify-net
     restart: always
@@ -99,8 +90,8 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
-      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+      - POSTGRES_USER=${PG_DATABASE_USER:-postgres}
+      - POSTGRES_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
     healthcheck:
       test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
       interval: 5s
