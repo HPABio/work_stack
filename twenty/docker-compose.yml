@@ -145,10 +145,10 @@ services:
         condition: service_healthy
     restart: always
 
-   redis-twenty:
-     image: redis
-     restart: always
-     command: ["--maxmemory-policy", "noeviction"]
+ redis-twenty:
+   image: redis
+   restart: always
+   command: ["--maxmemory-policy", "noeviction"]
 
 volumes:
   db-data:
