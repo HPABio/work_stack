@@ -89,10 +89,10 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - PG_DATABASE_USER=${PG_DATABASE_USER:-postgres}
-      - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
+      - POSTGRES_USER=${PG_DATABASE_USER:-postgres}
+      - POSTGRES_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${PG_DATABASE_USER:-postgres}", "-h", "localhost", "-d", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-postgres}", "-h", "localhost", "-d", "postgres"]
       interval: 5s
       timeout: 5s
       retries: 10
