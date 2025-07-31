@@ -1,11 +1,10 @@
 version: '3.8'  
-name: twenty
 services:
 
   server:
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
-      - 'server-local-data:/app/packages/twenty-server/.local-storage'
+      - server-local-data:/app/packages/twenty-server/.local-storage
     environment:
       - NODE_PORT=3000
       - NODE_ENV=production
@@ -16,9 +15,9 @@ services:
       - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
       - PG_DATABASE_PORT=${PG_DATABASE_PORT:-5432}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://redis-twenty:6379
 
-      - STORAGE_TYPE=${STORAGE_TYPE}
+      - STORAGE_TYPE=${STORAGE_TYPE:-local}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
@@ -26,7 +25,7 @@ services:
       - DISABLE_DB_MIGRATIONS=false
       - SIGN_IN_PREFILLED=false
 
-      - APP_SECRET=${APP_SECRET}
+      - APP_SECRET=${APP_SECRET:-hushhush}
       - MESSAGING_PROVIDER_GMAIL_ENABLED=${MESSAGING_PROVIDER_GMAIL_ENABLED}
       - CALENDAR_PROVIDER_GOOGLE_ENABLED=${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       - AUTH_GOOGLE_CLIENT_ID=${AUTH_GOOGLE_CLIENT_ID}
@@ -42,7 +41,6 @@ services:
       - traefik.http.routers.twenty.tls.certresolver=letsencrypt
       - traefik.http.services.twenty.loadbalancer.server.port=3000
 
-    
     networks:
       - coolify-net
     healthcheck:
@@ -50,7 +48,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-      restart: always
+    restart: always
 
   worker:
     image: twentycrm/twenty:${TAG:-latest}
@@ -66,11 +64,11 @@ services:
       - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
       - PG_DATABASE_PORT=${PG_DATABASE_PORT:-5432}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
-      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
-      - DISABLE_DB_MIGRATIONS="true" # it already runs on the server
-      - DISABLE_CRON_JOBS_REGISTRATION="true" # it already runs on the server
+      - REDIS_URL=${REDIS_URL:-redis://redis-twenty:6379}
+      - DISABLE_DB_MIGRATIONS=true # it already runs on the server
+      - DISABLE_CRON_JOBS_REGISTRATION=true # it already runs on the server
 
-      - STORAGE_TYPE=${STORAGE_TYPE}
+      - STORAGE_TYPE=${STORAGE_TYPE:-local}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
@@ -91,19 +89,23 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=${PG_DATABASE_USER:-postgres}
-      - POSTGRES_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
+      - PG_DATABASE_USER=${PG_DATABASE_USER:-postgres}
+      - PG_DATABASE_PASSWORD=${PG_DATABASE_PASSWORD:-postgres}
     healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+      test: ["CMD", "pg_isready", "-U", "${PG_DATABASE_USER:-postgres}", "-h", "localhost", "-d", "postgres"]
       interval: 5s
       timeout: 5s
       retries: 10
-      restart: always
+    networks:
+      - coolify-net
+    restart: always
 
- redis-twenty:
-   image: redis
-   restart: always
-   command: ["--maxmemory-policy", "noeviction"]
+  redis-twenty:
+    image: redis
+    restart: always
+    command: ["--maxmemory-policy", "noeviction"]
+    networks:
+      - coolify-net
 
 volumes:
   db-data:
@@ -112,12 +114,3 @@ volumes:
 networks:
   coolify-net:
     external: true
-
-
-
-
-
-
-
-
-
