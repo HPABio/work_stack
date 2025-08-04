@@ -83,6 +83,11 @@ services:
     networks:
       - coolify-net
     restart: always
+    depends_on:
+      db-twenty:
+        condition: service_healthy
+      redis-twenty:
+        condition: service_healthy
     
   db-twenty:
     image: postgres:16
