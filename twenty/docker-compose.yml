@@ -17,6 +17,14 @@ services:
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis-twenty:6379
 
+      - PG_POOL_ALLOW_EXIT_ON_IDLE=false
+      - IS_CONFIG_VARIABLES_IN_DB_ENABLED=true
+      - PG_ENABLE_POOL_SHARING=true
+      - IS_MULTIWORKSPACE_ENABLED=false
+
+
+
+
       - STORAGE_TYPE=${STORAGE_TYPE:-local}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
       - STORAGE_S3_NAME=${STORAGE_S3_NAME}
@@ -67,6 +75,11 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis-twenty:6379}
       - DISABLE_DB_MIGRATIONS=true # it already runs on the server
       - DISABLE_CRON_JOBS_REGISTRATION=true # it already runs on the server
+
+      - PG_POOL_ALLOW_EXIT_ON_IDLE=false
+      - IS_CONFIG_VARIABLES_IN_DB_ENABLED=true
+      - PG_ENABLE_POOL_SHARING=true
+      - IS_MULTIWORKSPACE_ENABLED=false
 
       - STORAGE_TYPE=${STORAGE_TYPE:-local}
       - STORAGE_S3_REGION=${STORAGE_S3_REGION}
