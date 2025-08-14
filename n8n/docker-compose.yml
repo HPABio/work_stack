@@ -85,7 +85,7 @@ services:
       retries: 10
 
   n8n-worker:
-    image: docker.n8n.io/n8nio/n8n
+    image: docker.n8n.io/n8nio/n8n:latest
     command: worker
     volumes:
       - n8n-data:/home/node/.n8n
