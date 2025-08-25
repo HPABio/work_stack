@@ -17,7 +17,6 @@ services:
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=redis://redis-twenty:6379
 
-      - PG_POOL_ALLOW_EXIT_ON_IDLE=false
       - IS_CONFIG_VARIABLES_IN_DB_ENABLED=true
       - PG_ENABLE_POOL_SHARING=true
       - IS_MULTIWORKSPACE_ENABLED=false
@@ -31,7 +30,6 @@ services:
       - STORAGE_S3_ENDPOINT=${STORAGE_S3_ENDPOINT}
 
       - DISABLE_DB_MIGRATIONS=false
-      - SIGN_IN_PREFILLED=false
 
       - APP_SECRET=${APP_SECRET:-hushhush}
       - MESSAGING_PROVIDER_GMAIL_ENABLED=${MESSAGING_PROVIDER_GMAIL_ENABLED}
@@ -73,10 +71,10 @@ services:
       - PG_DATABASE_PORT=${PG_DATABASE_PORT:-5432}
       - SERVER_URL=${SERVER_URL:-https://twenty.biocentra.eu}
       - REDIS_URL=${REDIS_URL:-redis://redis-twenty:6379}
+      
       - DISABLE_DB_MIGRATIONS=true # it already runs on the server
       - DISABLE_CRON_JOBS_REGISTRATION=true # it already runs on the server
 
-      - PG_POOL_ALLOW_EXIT_ON_IDLE=false
       - IS_CONFIG_VARIABLES_IN_DB_ENABLED=true
       - PG_ENABLE_POOL_SHARING=true
       - IS_MULTIWORKSPACE_ENABLED=false
